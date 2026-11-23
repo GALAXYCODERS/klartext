@@ -1,0 +1,42 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check sync
+        run: npm run sync:check
+      - name: Build release assets
+        run: node scripts/package.mjs
+      - name: Release notes from CHANGELOG.md
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          awk -v v="$VERSION" '
+            $0 ~ "^## \\[" v "\\]" { on = 1; next }
+            on && /^## \[/ { exit }
+            on && /^\[/ { exit }
+            on { print }
+          ' CHANGELOG.md > notes.md
+          printf '\n**Assets**\n- `klartext-design.skill` – Claude skill (claude.ai: Settings → Capabilities → Skills → Upload)\n- `klartext-template.zip` – presentation template (`npm ci && npm run dev`)\n' >> notes.md
+          cat notes.md
+      - name: Create or update release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            gh release edit "$GITHUB_REF_NAME" --notes-file notes.md
+          else
+            gh release create "$GITHUB_REF_NAME" --title "Klartext $GITHUB_REF_NAME" --notes-file notes.md --verify-tag
+          fi
+          gh release upload "$GITHUB_REF_NAME" release/klartext-design.skill release/klartext-template.zip --clobber

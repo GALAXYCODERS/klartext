@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en" data-theme="nacht">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Klartext – design system and presentation engine</title>
+<meta name="description" content="A black-and-white, code-and-typewriter design system with a living shape field, plus an offline HTML presentation engine.">
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Martian+Mono:wdth,wght@75..112.5,100..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="design-system/klartext.css">
+<style>
+  body { margin: 0; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+  header.top { display: flex; justify-content: space-between; padding: 20px 0; border-bottom: 1px solid var(--rule); }
+  .hero { position: relative; min-height: 64vh; display: flex; align-items: flex-end; overflow: hidden; }
+  .hero .wrap { position: relative; z-index: 1; width: 100%; padding-bottom: 64px; }
+  .hero .kt-text { max-width: 52ch; margin-top: 20px; }
+  main section { padding: 72px 0; border-top: 1px solid var(--rule); }
+  .links { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-top: 32px; }
+  .links a { color: inherit; text-decoration: none; display: block; }
+  .links a:focus-visible { outline: 2px solid var(--blau); outline-offset: 4px; }
+  .links a:hover .card { background: var(--bg-2); }
+  img { width: 100%; height: auto; display: block; border: 1px solid var(--rule); }
+</style>
+<script type="importmap">
+  { "imports": {
+      "gsap": "https://cdn.jsdelivr.net/npm/gsap@3.15.0/index.js",
+      "gsap/MotionPathPlugin": "https://cdn.jsdelivr.net/npm/gsap@3.15.0/MotionPathPlugin.js",
+      "gsap/DrawSVGPlugin": "https://cdn.jsdelivr.net/npm/gsap@3.15.0/DrawSVGPlugin.js"
+  } }
+</script>
+</head>
+<body>
+  <div class="hero" id="hero">
+    <div class="wrap">
+      <header class="top kt-meta"><span>Klartext</span><span>v0.1.0 · MIT</span></header>
+      <h1 class="kt-display" id="titel" style="margin-top:96px">Klartext</h1>
+      <p class="kt-text kt-muted">A black-and-white, code-and-typewriter design system with a living shape field, plus an offline HTML presentation engine.</p>
+    </div>
+  </div>
+  <main>
+    <section><div class="wrap">
+      <h2 class="kt-title">Look at it</h2>
+      <div class="links" id="links"></div>
+    </div></section>
+    <section><div class="wrap">
+      <img src="screenshots/diagram-dark.png" alt="Diagram slide of the demo deck: gateway, registry and service nodes connected by wires">
+    </div></section>
+  </main>
+<script type="module">
+  import { gsap } from 'gsap';
+  import { card } from './design-system/bausteine.js';
+  import { type, appear } from './design-system/motion.js';
+  import { createFeld } from './design-system/feld.js';
+  createFeld(document.getElementById('hero'), { pegel: 'laut', maske: { text: '</>', x: 0.78, y: 0.42, size: 0.46 } });
+  type(gsap.timeline({ delay: 0.4 }), document.getElementById('titel'), { per: 0.05, max: 0.6 });
+  const L = [
+    ['demo/presentation.html', '01', 'Demo deck', 'The presentation template, five slides. Keys: → next · O overview · T theme · P presenter · ? help.'],
+    ['design-system/beispiel/', '02', 'Design-system page', 'Building blocks, motion and the field on a scrolling page.'],
+    ['https://github.com/GALAXYCODERS/klartext', '03', 'Source on GitHub', 'Library, template, Claude skill, rulebook. MIT licensed.'],
+  ];
+  const el = document.getElementById('links');
+  el.innerHTML = L.map(([h, n, t, x]) => `<a href="${h}">${card({ num: n, title: t, text: x })}</a>`).join('');
+  appear(gsap.timeline({ delay: 0.6 }), [...el.querySelectorAll('.card')], { stagger: 0.12 });
+</script>
+</body>
+</html>

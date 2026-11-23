@@ -1,0 +1,445 @@
+/* ── Bedien-Oberflächen außerhalb der Folien ─────────────────────────────── */
+.ui-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
+  font-family: var(--font-sans);
+}
+
+.blackout {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  z-index: 200;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+}
+.blackout.is-on {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* kleine Hinweise (Toast) und Sprungziel-Anzeige */
+.toast,
+.goto-indicator {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%);
+  background: rgba(11, 11, 12, 0.92);
+  color: #ecebe6;
+  border: 1px solid rgba(236, 235, 230, 0.3);
+  border-radius: 2px;
+  padding: 10px 20px;
+  font-family: var(--font-mono);
+  font-stretch: 87.5%;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  white-space: nowrap;
+}
+.toast.is-visible,
+.goto-indicator.is-visible {
+  opacity: 1;
+}
+.goto-indicator {
+  bottom: auto;
+  top: 24px;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+/* Hilfe */
+.help {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+  z-index: 150;
+}
+.help.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+.help-panel {
+  background: #131315;
+  color: #ecebe6;
+  border: 1px solid rgba(236, 235, 230, 0.25);
+  border-radius: 2px;
+  padding: 32px 40px;
+  min-width: min(640px, 92vw);
+  max-width: 92vw;
+}
+.help-panel h2 {
+  margin: 0 0 18px;
+  font-size: 22px;
+  font-weight: 640;
+  font-stretch: 110%;
+}
+.help-panel dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px 28px;
+  margin: 0;
+  font-size: 16px;
+}
+.help-panel dt {
+  font-family: var(--font-mono);
+  font-stretch: 87.5%;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.help-panel dd {
+  margin: 0;
+  color: #a3a29c;
+}
+
+/* ── Übersicht (Taste O) ─────────────────────────────────────────────────── */
+.overview {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  background: rgba(0, 0, 0, 0.94);
+  overflow-y: auto;
+  padding: 48px clamp(16px, 4vw, 64px) 64px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.overview.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+.overview-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  color: #ecebe6;
+  margin-bottom: 28px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.overview-head h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 640;
+  font-stretch: 110%;
+}
+.overview-head span {
+  font-family: var(--font-mono);
+  font-stretch: 87.5%;
+  font-size: 14px;
+  color: #a3a29c;
+}
+.overview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+}
+.thumb {
+  all: unset;
+  cursor: pointer;
+  display: block;
+  border-radius: 2px;
+  outline: 2px solid transparent;
+  outline-offset: 4px;
+  transition: outline-color 0.15s ease, transform 0.2s var(--ease-out);
+}
+.thumb:hover {
+  transform: translateY(-2px);
+}
+.thumb:focus-visible,
+.thumb.is-selected {
+  outline-color: #8ccbff;
+}
+.thumb.is-current .thumb-frame {
+  box-shadow: 0 0 0 2px #ecebe6;
+}
+.thumb-frame {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: 2px;
+  overflow: hidden;
+  background: #000;
+}
+.thumb-stage {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform-origin: 0 0;
+  transform: scale(var(--thumb-scale, 0.15));
+  pointer-events: none;
+}
+.thumb-caption {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  color: #c9c8c2;
+  font-size: 14px;
+  line-height: 1.3;
+}
+.thumb-caption b {
+  font-family: var(--font-mono);
+  font-stretch: 87.5%;
+  color: #ecebe6;
+}
+
+/* ── Referentenansicht (Taste P, eigenes Fenster) ────────────────────────── */
+body.mode-presenter {
+  background: #0b0b0c;
+  color: #ecebe6;
+  min-height: 100%;
+}
+.presenter {
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 20px;
+  height: 100vh;
+  padding: 20px;
+}
+.presenter-bar {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  flex-wrap: wrap;
+  font-family: var(--font-mono);
+  font-stretch: 87.5%;
+  font-size: 15px;
+  color: #a3a29c;
+}
+.presenter-bar .big {
+  font-size: 34px;
+  font-weight: 600;
+  color: #ecebe6;
+  letter-spacing: 0.02em;
+}
+.presenter-bar .stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.presenter-bar .stat small {
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.presenter-bar .is-late {
+  color: #ff6b4f;
+}
+.presenter-bar .is-early {
+  color: #86e0ac;
+}
+.presenter-bar .spacer {
+  flex: 1;
+}
+.presenter button {
+  font: inherit;
+  font-family: var(--font-mono);
+  font-stretch: 87.5%;
+  font-size: 14px;
+  color: #ecebe6;
+  background: #131315;
+  border: 1px solid rgba(236, 235, 230, 0.3);
+  border-radius: 2px;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+.presenter button:hover {
+  background: #1d1d20;
+}
+.presenter-main,
+.presenter-side {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0;
+}
+.preview-label {
+  font-family: var(--font-mono);
+  font-stretch: 87.5%;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #a3a29c;
+  display: flex;
+  justify-content: space-between;
+}
+.preview {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 2px;
+  background: #000;
+  box-shadow: 0 0 0 1px rgba(236, 235, 230, 0.2);
+}
+.preview .stage {
+  left: 0;
+  top: 0;
+  transform-origin: 0 0;
+  transform: scale(var(--stage-scale, 0.3));
+}
+.notes {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  background: #131315;
+  border: 1px solid rgba(236, 235, 230, 0.18);
+  border-radius: 2px;
+  padding: 18px 22px;
+  font-size: calc(var(--notes-size, 22px) * 0.78);
+  line-height: 1.4;
+}
+
+/* Regie-Notizen: aktueller Klick groß unter der Folie, rechts der Ablauf der Folie */
+.cue {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  background: #131315;
+  border: 1px solid rgba(236, 235, 230, 0.18);
+  border-radius: 2px;
+  padding: 16px 22px;
+  font-size: var(--notes-size, 22px);
+  line-height: 1.4;
+}
+.cue:empty {
+  display: none;
+}
+.cue-head {
+  display: flex;
+  gap: 18px;
+  align-items: baseline;
+  font-family: var(--font-mono);
+  font-stretch: 87.5%;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #86e0ac;
+  margin-bottom: 10px;
+}
+.cue-kern {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  letter-spacing: 0;
+  text-transform: none;
+  color: #a3a29c;
+}
+.cue .rg-step {
+  display: block;
+  border: 0;
+  padding: 0;
+  background: none;
+}
+.cue .rg-zeigt {
+  font-size: 0.7em;
+  margin-bottom: 8px;
+}
+/* Aktuelle Folie etwas kleiner, damit der aktuelle Klick groß darunter Platz hat */
+.presenter-main .preview {
+  flex: none;
+  width: min(100%, calc(42vh * 16 / 9));
+}
+.cue .rg-key {
+  display: none;
+}
+.cue-next {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px dashed rgba(236, 235, 230, 0.3);
+  font-size: 0.72em;
+  color: #a3a29c;
+}
+.cue-next b {
+  color: #ecebe6;
+}
+.rg-step {
+  display: block;
+  padding: 10px 12px;
+  border-radius: 2px;
+  border: 1px solid transparent;
+}
+.rg-step + .rg-step {
+  margin-top: 4px;
+}
+.rg-step.is-now {
+  background: #1a1a1d;
+  border-color: #86e0ac;
+}
+.rg-step.is-done {
+  opacity: 0.45;
+}
+.rg-key {
+  font-family: var(--font-mono);
+  font-stretch: 87.5%;
+  font-size: 0.72em;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #86e0ac;
+  margin-bottom: 4px;
+}
+.rg-zeigt {
+  margin: 0 0 4px;
+  font-style: italic;
+  color: #a3a29c;
+  font-size: 0.82em;
+}
+.rg-sagen {
+  margin: 0;
+  padding-left: 1.1em;
+}
+.rg-sagen b {
+  color: #fff;
+}
+.rg-tipp {
+  margin: 6px 0 0;
+  font-size: 0.8em;
+  color: #8ccbff;
+}
+.rg-tipp::before {
+  content: 'Tipp: ';
+  font-weight: 600;
+}
+.rg-weiter,
+.rg-beleg {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-top: 1px solid rgba(236, 235, 230, 0.2);
+}
+.rg-beleg {
+  font-size: 0.8em;
+  color: #a3a29c;
+}
+.notes-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+.speaker {
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-stretch: 87.5%;
+  font-size: 14px;
+  color: #ecebe6;
+  background: #1d1d20;
+  border-radius: 2px;
+  padding: 4px 12px;
+}
+.presenter-disconnected {
+  color: #ff6b4f;
+}
+.cue .rg-step.is-now {
+  background: none;
+}

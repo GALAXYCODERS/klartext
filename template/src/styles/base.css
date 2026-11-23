@@ -1,0 +1,284 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Grundgerüst: Bühne, Folienrahmen (Kopf, Inhalt, Fußzeile), Szene.
+   Bausteine (Knoten, Pakete, Karten …) stehen in components.css.
+   ───────────────────────────────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-kerning: normal;
+}
+
+body.mode-main {
+  overflow: hidden;
+}
+body.mode-main.cursor-hidden,
+body.mode-main.cursor-hidden * {
+  cursor: none !important;
+}
+
+/* ── Bühne: feste Leinwand 1920×1080, skaliert auf jedes Fenster ─────────── */
+.viewport {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+/* Punktraster = die Zeichenfläche der Diagramme: Punkte liegen exakt auf jedem 24. Pixel. */
+.stage,
+.print-page,
+.thumb-stage {
+  width: 1920px;
+  height: 1080px;
+  position: relative;
+  overflow: hidden;
+  color: var(--ink);
+  font-family: var(--font-sans);
+  text-align: left;
+  background-color: var(--bg);
+  /* statisches Punktraster: Rückfall ohne WebGL2 und Druck. Mit Feld (.has-feld) malt die Leinwand. */
+  background-image: radial-gradient(circle, var(--dot) 1.4px, transparent 1.6px);
+  background-size: var(--grid) var(--grid);
+  background-position: calc(var(--grid) / 2) calc(var(--grid) / 2);
+}
+
+.stage {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform-origin: 50% 50%;
+  transform: translate(-50%, -50%) scale(var(--stage-scale, 1));
+}
+
+/* Das Feld: eine Leinwand hinter allen Folien (src/engine/feld.js) */
+canvas.feld {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1920px;
+  height: 1080px;
+  display: block;
+  z-index: 0;
+  pointer-events: none;
+}
+.stage.has-feld,
+.stage.has-feld .slide.theme-invert,
+.slide.feld-aus,
+.print-page:has(.feld-aus) {
+  background-image: none;
+}
+.stage.has-feld .slide.theme-invert {
+  background-color: transparent;
+}
+
+.flip-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 50;
+}
+.flip-scope {
+  position: absolute;
+  inset: 0;
+}
+.flip-ghost {
+  position: absolute !important;
+  margin: 0 !important;
+  transform-origin: 0 0;
+}
+[data-flying] {
+  opacity: 0 !important;
+}
+
+/* ── Folie ───────────────────────────────────────────────────────────────── */
+.slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 0 var(--pad-x);
+}
+.slide.is-hidden {
+  visibility: hidden;
+}
+
+/* Inversionsfolie (Kernaussage): eigene Fläche im umgedrehten Theme */
+.slide.theme-invert {
+  color: var(--ink);
+  background-color: var(--bg);
+  background-image: radial-gradient(circle, var(--dot) 1.4px, transparent 1.6px);
+  background-size: var(--grid) var(--grid);
+  background-position: calc(var(--grid) / 2) calc(var(--grid) / 2);
+}
+
+/* Meta-Zeile: Projekt · Kapitel · Position. Ersetzt die Kicker-Zeile über dem Titel. */
+.slide-head {
+  position: relative;
+  z-index: 2;
+  flex: none;
+  height: var(--head-h);
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 32px;
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--font-mono);
+  font-size: var(--fs-meta);
+  font-weight: 460;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+.slide-head .meta-chapter {
+  color: var(--ink);
+}
+.slide-head .meta-pos {
+  justify-self: end;
+  font-variant-numeric: tabular-nums;
+}
+.slide-head .meta-pos b {
+  font-weight: 460;
+  color: var(--ink);
+}
+
+.slide-header {
+  position: relative;
+  z-index: 2;
+  flex: none;
+  margin-top: 48px;
+}
+/* Folientitel = Befehl: Mono, Versalien. Lange Titel laufen schmaler statt kleiner. */
+.slide-title {
+  font-family: var(--font-mono);
+  font-size: var(--fs-h1);
+  font-weight: 560;
+  font-stretch: 100%;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  margin: 0;
+  max-width: 1728px;
+  text-wrap: balance;
+}
+.slide-title--schmal {
+  font-stretch: 87.5%;
+}
+
+.slide-body {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  min-height: 0;
+  margin-top: 36px;
+  padding-bottom: 32px;
+  font-size: var(--fs-body);
+  line-height: 1.35;
+}
+.slide--nochrome {
+  padding: 0;
+}
+.slide--nochrome .slide-body {
+  margin: 0;
+  padding: 0;
+}
+
+/* Szene: Diagrammfläche in Bühnenkoordinaten (0–1920 × 0–1080), auf dem 24-px-Raster.
+   Die Engine hängt .scene direkt an die Folie, unabhängig von der Titelhöhe. */
+.scene {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+.scene > * {
+  position: absolute;
+}
+.scene .is-clickable {
+  pointer-events: auto;
+}
+.scene svg.wires {
+  left: 0;
+  top: 0;
+  width: 1920px;
+  height: 1080px;
+  overflow: visible;
+}
+
+/* ── Fußzeile: VL-Brücke · Quelle · Minuten-Lineal ─────────────────────── */
+.slide-footer {
+  position: relative;
+  z-index: 2;
+  flex: none;
+  min-height: var(--foot-h);
+  display: flex;
+  align-items: center;
+  gap: 48px;
+  padding: 14px 0;
+  border-top: 1px solid var(--rule);
+}
+.foot-src {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 12px;
+}
+.vl-tags {
+  display: contents;
+}
+.quelle {
+  flex: 1 1 640px;
+  font-size: var(--fs-quelle);
+  line-height: 1.4;
+  color: var(--ink-2);
+  max-width: 1400px;
+}
+.quelle-label {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 460;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  margin-right: 10px;
+}
+
+/* Minuten-Lineal: 45 Striche = 45 Minuten. Abgelaufen in --ink, Teilgrenzen als lange Striche. */
+.ticks {
+  flex: none;
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 22px;
+}
+.ticks > i {
+  width: 2px;
+  height: 12px;
+  background: var(--rule-2);
+}
+.ticks > i.is-cut {
+  height: 22px;
+}
+.ticks > i.is-done {
+  background: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}

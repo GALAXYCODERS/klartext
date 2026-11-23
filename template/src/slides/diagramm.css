@@ -1,0 +1,32 @@
+.slide--diagramm .reg-list {
+  font-family: var(--font-mono);
+  font-stretch: 87.5%;
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--ink-2);
+  display: grid;
+  gap: 4px;
+  width: 288px;
+}
+.slide--diagramm .reg-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  column-gap: 16px;
+  padding: 2px 10px;
+  border-left: 2px solid var(--ink-3);
+}
+.slide--diagramm .reg-new {
+  color: var(--ink);
+  border-left-color: var(--gruen);
+}
+.slide--diagramm .gw-cards {
+  left: 96px;
+  top: 744px;
+  width: 1728px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+}
+.slide--diagramm .gw-c {
+  padding: 22px 30px 24px;
+}

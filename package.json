@@ -1,0 +1,15 @@
+{
+  "name": "klartext",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Klartext – a black-and-white, code-and-typewriter design system with a living shape field, plus an offline HTML presentation engine.",
+  "license": "MIT",
+  "type": "module",
+  "repository": { "type": "git", "url": "https://github.com/GALAXYCODERS/klartext.git" },
+  "scripts": {
+    "sync": "node scripts/sync.mjs",
+    "sync:check": "node scripts/sync.mjs --check",
+    "check:js": "for f in design-system/*.js skill/klartext-design/assets/*.js scripts/*.mjs; do node --check \"$f\" || exit 1; done && echo '✓ syntax ok'",
+    "package": "node scripts/package.mjs"
+  }
+}

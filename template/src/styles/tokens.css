@@ -1,0 +1,102 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Design-Tokens „Klartext“ – siehe DESIGN_KLARTEXT.md
+   Nacht = Vortrag im abgedunkelten Raum · Papier = heller Raum, schwacher Beamer & PDF.
+   Inversion: Eine Folie mit .theme-invert dreht das Theme lokal um (Kernaussagen).
+   Regel: Farbe trägt nie allein Bedeutung (immer + Icon/Name/Form).
+   Kontraste prüft `npm run contrast`.
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* Nacht */
+:root,
+:root[data-theme='dark'],
+:root[data-theme='light'] .theme-invert {
+  --bg: #0b0b0c;
+  --bg-2: #131315; /* erhöhte Fläche: Knoten, Tabellenkopf */
+  --bg-sunken: #070708;
+  --ink: #ecebe6; /* Text, aktive Linien */
+  --ink-2: #a3a29c; /* Sekundärtext, Quellen */
+  --ink-3: #76756f; /* Leitungen, Meta ≥ 24 px, Deko */
+  --rule: #2a2a2e; /* Haarlinien, Raster */
+  --rule-2: #46464b; /* Eckmarken, leere Ticks */
+
+  /* Services – identisch mit den Teamfarben im Spiel. Zahlung = invertiert (Füllung in --ink). */
+  --blau: #8ccbff; /* Bestellung · Team A */
+  --gruen: #86e0ac; /* Versand · Team C */
+  --alarm: #ff6b4f; /* NUR für Ausfall/Fehler */
+  --select: rgba(140, 203, 255, 0.26); /* Editor-Markierung im Zitat */
+  --dot: rgba(236, 235, 230, 0.1); /* statisches Punktraster: Rückfall ohne WebGL und Druck */
+  --f-dot: #7c7c80; /* Feld: ruhende Formen (über den Pegel abgedunkelt) */
+  --f-hi: #f2f1ec; /* Feld: Puls und Aufbau-Front */
+
+  color-scheme: dark;
+}
+
+/* Papier */
+:root[data-theme='light'],
+:root[data-theme='dark'] .theme-invert {
+  --bg: #f1f0eb;
+  --bg-2: #fbfaf6;
+  --bg-sunken: #e8e7e1;
+  --ink: #0c0c0d;
+  --ink-2: #4c4b46;
+  --ink-3: #76746d;
+  --rule: #d8d6ce;
+  --rule-2: #b3b1a8;
+
+  --blau: #1662c2;
+  --gruen: #0a7646;
+  --alarm: #c4351b;
+  --select: #cfe3fb;
+  --dot: rgba(12, 12, 13, 0.11);
+  --f-dot: #a9a79e;
+  --f-hi: #1a1a1a;
+
+  color-scheme: light;
+}
+
+:root {
+  /* Schrift */
+  --font-sans: 'Archivo', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'Martian Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* Typo-Skala bei 1920×1080 (Briefing: Fließtext ≥ 28 px, Quellen ≥ 16 px) */
+  --fs-display: 120px; /* Titel XL: Titelfolie, Fazit (Mono) */
+  --fs-stat: 200px; /* Kennzahl (Mono, dünn) */
+  --fs-statement: 72px; /* Leitsatz */
+  --fs-h1: 60px; /* Folientitel (Mono, Versalien) */
+  --fs-quote: 52px; /* großes Zitat */
+  --fs-h2: 40px; /* Rahmentitel groß, Zahlen-Labels */
+  --fs-h3: 30px; /* Rahmentitel */
+  --fs-body: 30px; /* Fließtext */
+  --fs-small: 26px; /* Rahmentext */
+  --fs-label: 20px; /* Code / Leitungslabel (Mono 87,5 %) */
+  --fs-meta: 17px; /* Kopf-/Fußzeile, Zustände (Mono, Versalien) */
+  --fs-quelle: 18px; /* Quellenzeile */
+
+  /* Abstände – Grundzelle 24 px = Zelle des Punktfelds = Diagrammraster */
+  --sp-1: 8px;
+  --sp-2: 16px;
+  --sp-3: 24px;
+  --sp-4: 32px;
+  --sp-5: 48px;
+  --sp-6: 72px;
+  --sp-7: 96px;
+  --grid: 24px;
+
+  /* Folienrahmen: Rand 96, Kopfzeile bis y 96, Titel ab y 144, Fußzeile ab y 984 */
+  --pad-x: 96px;
+  --head-h: 96px;
+  --foot-h: 96px;
+  --pad-top: 144px;
+
+  /* Radien: Rahmen und Knoten eckig, nur Tags/Umschalter 2 px. Keine Pillen. */
+  --r-sm: 2px;
+  --r: 2px;
+  --r-lg: 2px;
+
+  /* Bewegung (GSAP-Gegenstücke in src/lib/motion.js) */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1); /* expo.out */
+  --ease-move: cubic-bezier(0.65, 0, 0.35, 1); /* power3.inOut */
+  --dur-fast: 0.18s;
+  --dur: 0.36s;
+}

@@ -1,0 +1,37 @@
+/* Druckmodus (?print=1): jede Folie = eine Seite 1920×1080, Endzustand, keine Animation. */
+@page {
+  size: 1920px 1080px;
+  margin: 0;
+}
+
+body.mode-print {
+  background: #777;
+  overflow: auto;
+}
+body.mode-print .print-page {
+  margin: 0 auto 24px;
+  break-after: page;
+  page-break-after: always;
+}
+body.mode-print .print-page:last-child {
+  break-after: auto;
+  page-break-after: auto;
+}
+
+@media print {
+  html,
+  body.mode-print {
+    background: none;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  body.mode-print .print-page {
+    margin: 0;
+  }
+}
+
+/* Druck: statt des Felds ein sehr helles, statisches Punktraster */
+body.mode-print .print-page,
+body.mode-print .slide.theme-invert {
+  --dot: color-mix(in srgb, var(--ink) 6%, transparent);
+}

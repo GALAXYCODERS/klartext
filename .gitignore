@@ -1,0 +1,11 @@
+# local working material (not part of the public repository)
+/_startpaket/
+
+node_modules/
+template/dist/
+template/screenshots/
+release/
+_site/
+.DS_Store
+.env
+*.log

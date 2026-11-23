@@ -1,0 +1,28 @@
+name: Bug report
+description: Something looks or behaves wrong
+labels: [bug]
+body:
+  - type: dropdown
+    id: part
+    attributes:
+      label: Part
+      options: [design-system, template, skill, docs, other]
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happens, and what did you expect?
+      description: Screenshots help – please in the theme where it happens (Nacht/Papier).
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: "1. npm run dev\n2. press O\n3. …"
+  - type: input
+    id: env
+    attributes:
+      label: Browser and OS
+      placeholder: Chrome 142, macOS 26

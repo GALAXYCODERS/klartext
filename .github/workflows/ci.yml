@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  library:
+    name: Design system & skill
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Syntax check (design-system, skill assets, scripts)
+        run: npm run check:js
+      - name: Skill is in sync with design-system/ and docs/
+        run: npm run sync:check
+      - name: Package skill and template
+        run: node scripts/package.mjs
+
+  template:
+    name: Presentation template
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: template
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: template/package-lock.json
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Contrast (WCAG AA, both themes)
+        run: npm run contrast
+      - name: QA (every slide and step, clicker, keys, console)
+        run: npm run qa
+      - name: PDF export
+        run: npm run pdf
+      - name: Speaker-notes PDF
+        run: npm run notizen
+      - name: Upload screenshots and PDFs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: template-qa
+          path: |
+            template/screenshots/
+            template/dist/
+          retention-days: 14

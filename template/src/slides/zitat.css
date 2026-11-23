@@ -1,0 +1,38 @@
+.slide--zitat .slide-body {
+  margin-top: 36px;
+}
+.slide--zitat .d-quote {
+  max-width: 1600px;
+}
+.slide--zitat .d-row {
+  display: grid;
+  grid-template-columns: 1fr 340px 1fr;
+  align-items: stretch;
+  margin-top: 48px;
+}
+.slide--zitat .d-core {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+.slide--zitat .d-core > svg {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 100%;
+  height: 12px;
+  margin-top: -6px;
+  overflow: visible;
+}
+.slide--zitat .d-badge {
+  position: relative;
+}
+.slide--zitat .d-lead {
+  font-size: 48px;
+  margin-top: 52px;
+}
+.slide--zitat .d-lead::before {
+  width: 12px;
+  height: 12px;
+  margin-bottom: 16px;
+}
