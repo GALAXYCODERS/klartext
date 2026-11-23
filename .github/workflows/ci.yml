@@ -26,7 +26,8 @@ jobs:
 
   template:
     name: Presentation template
-    runs-on: ubuntu-latest
+    # Playwright 1.56 has no browser builds for Ubuntu 26.04 yet (ubuntu-latest)
+    runs-on: ubuntu-24.04
     defaults:
       run:
         working-directory: template
